@@ -24,6 +24,13 @@ var ball = {
 rightWristX = 0;
 rightWristY = 0;
 scoreRightWrist = 0;
+game_status = "";
+
+function preload()
+{
+  ball_touch_paddel = loadSound("ball_touch_paddel.wav");
+  missed = loadSound("missed.wav");
+}
 
 
 function setup(){
@@ -55,11 +62,19 @@ function gotPoses(results)
   }
 }
 
+function startGame()
+{
+  game_status = "start";
+  document.getElementById("status").innerHTML = "Game is loading.";
+}
 
-function draw(){
 
- background(0);
- image(video, 0, 0, 700, 600); 
+function draw()
+{
+  if(game_status == "start")
+  {
+    background(0);
+    image(video, 0, 0, 700, 600); 
 
  fill("black");
  stroke("black");
@@ -83,7 +98,7 @@ function draw(){
    fill(250,0,0);
     stroke(0,0,250);
     strokeWeight(0.5);
-   paddle1Y = mouseY; 
+   paddle1Y = rightWristY; 
    rect(paddle1X,paddle1Y,paddle1,paddle1Height,100);
    
    
@@ -103,6 +118,7 @@ function draw(){
    
    //function move call which in very important
     move();
+  }
 }
 
 
@@ -155,10 +171,12 @@ function move(){
   if (ball.x-2.5*ball.r/2< 0){
   if (ball.y >= paddle1Y&& ball.y <= paddle1Y + paddle1Height) {
     ball.dx = -ball.dx+0.5;
+    ball_touch_paddel.play();
     playerscore++;
   }
   else{
     pcscore++;
+    missed.play();
     reset();
     navigator.vibrate(100);
   }
@@ -200,4 +218,11 @@ function paddleInCanvas(){
   if(mouseY < 0){
     mouseY =0;
   }  
+}
+
+function restart()
+{
+  loop();
+  pcscore = 0;
+  playerscore = 0;
 }
